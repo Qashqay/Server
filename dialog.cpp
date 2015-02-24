@@ -101,12 +101,14 @@ void Dialog::onMessageToGui(QString message, QString from, const QStringList &us
         {
             ui->lwLog->insertItem(0, QDate::currentDate().toString(Qt::SystemLocaleDate)+message+" dT="+ui->lContrast->text());
             _servMany[0]->_logged.append(QDate::currentDate().toString(Qt::SystemLocaleDate)+" "+message+" dT="+ui->lContrast->text());
+            streamOut<<QDate::currentDate().toString(Qt::SystemLocaleDate)+message+" dT="+ui->lContrast->text()<<endl;
         }
         else
         {
             ui->lwLog->insertItem(0, QDate::currentDate().toString(Qt::SystemLocaleDate)+message+" dT="+ui->lContrast->text());
             ui->lwLog->item(0)->setTextColor(Qt::blue);
             _servMany[0]->_logged.append(QDate::currentDate().toString(Qt::SystemLocaleDate)+" "+message+" dT="+ui->lContrast->text());
+            streamOut<<QDate::currentDate().toString(Qt::SystemLocaleDate)+message+" dT="+ui->lContrast->text()<<endl;
         }
     }
 }
@@ -197,7 +199,10 @@ void Dialog::addToLog(QString text, QColor color, bool toFile)
     }
 }
 
-void Dialog::writeCurrentState()
+void Dialog::writeCurrentState(QString text)
 {
-   streamError<<QDate::currentDate().toString(Qt::SystemLocaleDate)<<"\t"<<ui->Status->text()<<endl;
+   if(text=="")
+    streamError<<QDate::currentDate().toString(Qt::SystemLocaleDate)<<"\t"<<ui->Status->text()<<endl;
+   else
+    streamError<<QDate::currentDate().toString(Qt::SystemLocaleDate)<<"\t"<<text<<endl;
 }

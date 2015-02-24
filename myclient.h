@@ -59,6 +59,7 @@ signals:
     void removeUserFromGui(QString name);
     void removeUser(MyClient *client);
     void messageToGui(QString message, QString from, const QStringList &users);
+    void errorSignal(QString message);
 
 private slots:
     void onConnect();

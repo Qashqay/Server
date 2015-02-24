@@ -68,20 +68,15 @@ void MyClient::onReadyRead()
 {
 
     QDataStream in(_sok);
-    QFile file("error.log");
+    //QFile file("error1.log");
+    //file
     long load;
     //если считываем новый блок первые 2 байта это его размер
     if (_blockSize == 0) {
         //если пришло меньше 2 байт ждем пока будет 2 байта
         if (_sok->bytesAvailable() < (int)sizeof(qint64))
         {
-            if (file.open(QIODevice::Append))
-            {
-                QTextStream stream(&file);
-                stream <<"Error in line 81"<<"\r\n";
-                stream << endl;
-                file.close();
-            }
+            emit errorSignal("Error in line 81");
             return;
         }
         //считываем размер (2 байта)
@@ -93,13 +88,7 @@ void MyClient::onReadyRead()
     //ждем пока блок прийдет полностью
     if (_sok->bytesAvailable() < _blockSize)
     {
-        if (file.open(QIODevice::Append))
-        {
-            QTextStream stream(&file);
-            stream <<"Error in line 99"<<"\r\n";
-            stream << endl;
-            file.close();
-        }
+        emit errorSignal("Error in line 99");
         return;
     }
     else
@@ -113,13 +102,7 @@ void MyClient::onReadyRead()
     {
         if (!_isAutched &&command!=comMessageFromProg && command != comAutchReq && command !=comCheck  && command!=comMilReady && command!=comMilOut&&command!=comStopSendInterf&&command!=comSendInterf&&command!=comFullSendInterf)
         {
-            if (file.open(QIODevice::Append))
-            {
-                QTextStream stream(&file);
-                stream <<"Error in line 119"<<"\r\n";
-                stream << endl;
-                file.close();
-            }
+            emit errorSignal("Error in line 119");
             return;
 }
         switch(command)
@@ -143,13 +126,7 @@ void MyClient::onReadyRead()
                     //отправл€ем ошибку
 
                     doSendCommand(comErrNameUsed);
-                    if (file.open(QIODevice::Append))
-                    {
-                        QTextStream stream(&file);
-                        stream <<"Error in line 149"<<"\r\n";
-                        stream << endl;
-                        file.close();
-                    }
+                    emit errorSignal("Error in line 149");
                     return;
                 }
                 //авторизаци€ пройдена
@@ -169,13 +146,7 @@ void MyClient::onReadyRead()
                 char Buffer[100];
                 if (load>99)
                 {
-                    if (file.open(QIODevice::Append))
-                    {
-                        QTextStream stream(&file);
-                        stream <<"Error in line 175"<<"\r\n";
-                        stream << endl;
-                        file.close();
-                    }
+                    emit errorSignal("Error in line 175");
                     return;
                 }
                 memset(Buffer,0,100);
@@ -338,13 +309,8 @@ void MyClient::onReadyRead()
     {
         if (!_isAutched && command != comAutchReq && command !=comMessageFromProg && command!=comStatusInt)
         {
-            if (file.open(QIODevice::Append))
-            {
-                QTextStream stream(&file);
-                stream <<"Error in line 344"<<"\r\n";
-                stream << endl;
-                file.close();
-            }
+
+            emit errorSignal("Error in line 344");
             return;
         }
         switch (command)
@@ -367,14 +333,8 @@ void MyClient::onReadyRead()
                     //отправл€ем ошибку
                     doSendCommand(comErrNameUsed);
                     {
-                        if (file.open(QIODevice::Append))
-                        {
-                            QTextStream stream(&file);
-                            stream <<"Error in line 373"<<"\r\n";
-                            stream << endl;
-                            file.close();
-                        }
-                    return;
+                        emit errorSignal("Error in line 373");
+                        return;
                     }
                 }
                 //авторизаци€ пройдена
@@ -391,13 +351,7 @@ void MyClient::onReadyRead()
                 memset(Buffer,0,100);
                 if (load>99)
                 {
-                    if (file.open(QIODevice::Append))
-                    {
-                        QTextStream stream(&file);
-                        stream <<"Error in line 397"<<"\r\n";
-                        stream << endl;
-                        file.close();
-                    }
+                    emit errorSignal("Error in line 397");
                     return;
                 }
                 _sok->read(Buffer,load);
@@ -417,13 +371,7 @@ void MyClient::onReadyRead()
                 char Buffer[128];
                 if (load>127)
                 {
-                    if (file.open(QIODevice::Append))
-                    {
-                        QTextStream stream(&file);
-                        stream <<"Error in line 423"<<"\r\n";
-                        stream << endl;
-                        file.close();
-                    }
+                    emit errorSignal("Error in line 423");
                     return;
                 }
                 memset(Buffer,0,128);
@@ -465,13 +413,7 @@ void MyClient::onReadyRead()
                 {
                     //отправл€ем ошибку
                     doSendCommand(comErrNameUsed);
-                    if (file.open(QIODevice::Append))
-                    {
-                        QTextStream stream(&file);
-                        stream <<"Error in line 470"<<"\r\n";
-                        stream << endl;
-                        file.close();
-                    }
+                    emit errorSignal("Error in line 470");
                     return;
                 }
                 //авторизаци€ пройдена
@@ -522,13 +464,7 @@ void MyClient::onReadyRead()
                 char Buffer[32];
                 if (load>31)
                 {
-                    if (file.open(QIODevice::Append))
-                    {
-                        QTextStream stream(&file);
-                        stream <<"Error in line 528"<<"\r\n";
-                        stream << endl;
-                        file.close();
-                    }
+                    emit errorSignal("Error in line 528");
                     return;
                 }
                 memset(Buffer,0,32);
@@ -545,13 +481,7 @@ void MyClient::onReadyRead()
                 char Buffer[512];
                 if (load>511)
                 {
-                    if (file.open(QIODevice::Append))
-                    {
-                        QTextStream stream(&file);
-                        stream <<"Error in line 551"<<"\r\n";
-                        stream << endl;
-                        file.close();
-                    }
+                    emit errorSignal("Error in line 551");
                     return;
                 }
                 memset(Buffer,0,512);

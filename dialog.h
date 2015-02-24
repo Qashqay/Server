@@ -43,7 +43,7 @@ private slots:
     void on_pbSend_clicked();
     void on_cbToAll_clicked();
     void on_pbStartStop_toggled(bool checked);
-    void writeCurrentState();
+    void writeCurrentState(QString text = "");
 };
 
 #endif // DIALOG_H

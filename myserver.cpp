@@ -152,6 +152,7 @@ void MyServer::incomingConnection(int handle)
         connect(client, SIGNAL(addUserToGui(QString)), _widget, SLOT(onAddUserToGui(QString)));
         connect(client, SIGNAL(removeUserFromGui(QString)), _widget, SLOT(onRemoveUserFromGui(QString)));
         connect(client, SIGNAL(messageToGui(QString,QString,QStringList)), _widget, SLOT(onMessageToGui(QString,QString,QStringList)));
+        connect(client, SIGNAL(errorSignal(QString)),_widget,SLOT(writeCurrentState(QString)));
     }
     connect(client, SIGNAL(removeUser(MyClient*)), this, SLOT(onRemoveUser(MyClient*)));
     _clients.append(client);
