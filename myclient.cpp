@@ -431,6 +431,7 @@ void MyClient::onReadyRead()
                 message=QString::fromAscii(Buffer);;
                 _isAutched = true;
                 _serv->doSendStatus(message,_sok->localPort());
+                emit messageToGui(message, "CurrentStatus", QStringList());
             }
             break;
             default:
@@ -511,7 +512,6 @@ void MyClient::onReadyRead()
                 message=QString::fromAscii(Buffer);
                 _isAutched = true;
                 _serv->doSendFuckingMessage(message,1237);
-                //emit messageToGui(message, "MainProg", QStringList());
                 free(Buffer);
             }
             break;
@@ -556,7 +556,9 @@ void MyClient::onReadyRead()
                 }
                 memset(Buffer,0,512);
                 _sok->read(Buffer,load);
-                message=QString::fromAscii(Buffer);;
+                message=QString::fromAscii(Buffer);
+                if (message.toFloat())
+
                 _isAutched = true;
                 _serv->doSendContrast(message,_sok->localPort());
                 qDebug()<<"send Contrast";

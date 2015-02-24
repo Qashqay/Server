@@ -5,6 +5,7 @@
 #include <QtGui>
 #include <QtCore>
 #include <QFile>
+ #include <QTimer>
 //#include <QtMultimedia>
 #include "myserver.h"
 #define SERVER_COUNT 7
@@ -16,7 +17,11 @@ namespace Ui {
 class Dialog : public QDialog
 {
     Q_OBJECT
-
+    QFile fileOut;
+    QFile fileError;
+    QTimer *timerOfCorrectWork;
+    QTextStream streamOut;
+    QTextStream streamError;
 public:
     explicit Dialog(QWidget *parent = 0);
     ~Dialog();
@@ -24,7 +29,7 @@ public:
 private:
     Ui::Dialog *ui;
     MyServer **_servMany;
-    void addToLog(QString text, QColor color);
+    void addToLog(QString text, QColor color, bool toFile=true);
 
 signals:
 
@@ -38,6 +43,7 @@ private slots:
     void on_pbSend_clicked();
     void on_cbToAll_clicked();
     void on_pbStartStop_toggled(bool checked);
+    void writeCurrentState();
 };
 
 #endif // DIALOG_H

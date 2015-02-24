@@ -39,10 +39,23 @@ Dialog::Dialog(QWidget *parent) :QDialog(parent), ui(new Ui::Dialog)
         }
     }
     _servMany[0]->doSendToAllProgramMessage("0",1232);
+    fileOut.setFileName("./permanent.log");
+    fileError.setFileName("./error.log");
+    if(!fileOut.open(QIODevice::WriteOnly))
+        addToLog("Unabled to open permanent.log",Qt::red);
+    if(!fileError.open(QIODevice::WriteOnly))
+        addToLog("Unabled to open error.log",Qt::red);
+    timerOfCorrectWork = new QTimer (this);
+    connect(timerOfCorrectWork,SIGNAL(timeout()),this,SLOT(writeCurrentState()));
+    timerOfCorrectWork->start(1800000);
+    streamOut.setDevice(&fileOut);
+    streamError.setDevice(&fileError);
 }
 
 Dialog::~Dialog()
 {
+    fileOut.close();
+    fileError.close();
     delete ui;
 }
 
@@ -77,6 +90,10 @@ void Dialog::onMessageToGui(QString message, QString from, const QStringList &us
         {
             ui->lContrast->setText(message);
         }
+    }
+    else if (from=="CurrentStatus")
+    {
+        ui->Status->setText(message);
     }
     else
     {
@@ -164,8 +181,23 @@ void Dialog::on_pbStartStop_toggled(bool checked)
     }
 }
 
-void Dialog::addToLog(QString text, QColor color)
+void Dialog::addToLog(QString text, QColor color, bool toFile)
 {
-    ui->lwLog->insertItem(0,text);
-    ui->lwLog->item(0)->setTextColor(color);
+    if(!toFile)
+    {
+        ui->lwLog->insertItem(0,text);
+        ui->lwLog->item(0)->setTextColor(color);
+    }
+    else
+    {
+            ui->lwLog->insertItem(0,text);
+            ui->lwLog->item(0)->setTextColor(color);
+            streamOut<<text<<endl;
+
+    }
+}
+
+void Dialog::writeCurrentState()
+{
+   streamError<<QDate::currentDate().toString(Qt::SystemLocaleDate)<<"\t"<<ui->Status->text()<<endl;
 }

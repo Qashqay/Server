@@ -183,13 +183,26 @@
     </rect>
    </property>
    <property name="text">
-    <string>3.6</string>
+    <string>3.7</string>
    </property>
   </widget>
   <widget class="QLabel" name="lContrast">
    <property name="geometry">
     <rect>
      <x>220</x>
+     <y>240</y>
+     <width>46</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="Status">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
      <y>240</y>
      <width>46</width>
      <height>13</height>

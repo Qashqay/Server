@@ -1,8 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'dialog.ui'
 **
-** Created: Tue 23. Dec 11:49:54 2014
-**      by: Qt User Interface Compiler version 4.8.4
+** Created by: Qt User Interface Compiler version 4.8.5
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -45,6 +44,7 @@ public:
     QPlainTextEdit *pteMessage;
     QLabel *label_4;
     QLabel *lContrast;
+    QLabel *Status;
 
     void setupUi(QDialog *Dialog)
     {
@@ -128,6 +128,9 @@ public:
         lContrast = new QLabel(Dialog);
         lContrast->setObjectName(QString::fromUtf8("lContrast"));
         lContrast->setGeometry(QRect(220, 240, 46, 13));
+        Status = new QLabel(Dialog);
+        Status->setObjectName(QString::fromUtf8("Status"));
+        Status->setGeometry(QRect(270, 240, 46, 13));
 
         retranslateUi(Dialog);
 
@@ -145,8 +148,9 @@ public:
         cbToAll->setShortcut(QString());
         pbStartStop->setText(QApplication::translate("Dialog", "\320\241\320\274\320\265\320\275\320\260 \320\260\320\264\321\200\320\265\321\201\320\260", 0, QApplication::UnicodeUTF8));
         pteMessage->setPlainText(QString());
-        label_4->setText(QApplication::translate("Dialog", "3.6", 0, QApplication::UnicodeUTF8));
+        label_4->setText(QApplication::translate("Dialog", "3.7", 0, QApplication::UnicodeUTF8));
         lContrast->setText(QString());
+        Status->setText(QString());
     } // retranslateUi
 
 };

@@ -19,8 +19,7 @@ HEADERS  += dialog.h \
 
 FORMS    += dialog.ui
 
-OTHER_FILES += \
-    ../serverIP.ini
+OTHER_FILES +=
 
 
 
