@@ -20,8 +20,7 @@ class Dialog : public QDialog
     QFile fileOut;
     QFile fileError;
     QTimer *timerOfCorrectWork;
-    QTextStream streamOut;
-    QTextStream streamError;
+    double mincontrast;
 public:
     explicit Dialog(QWidget *parent = 0);
     ~Dialog();
@@ -30,7 +29,7 @@ private:
     Ui::Dialog *ui;
     MyServer **_servMany;
     void addToLog(QString text, QColor color, bool toFile=true);
-
+    void minimumContrast();
 signals:
 
 public slots:

@@ -39,23 +39,16 @@ Dialog::Dialog(QWidget *parent) :QDialog(parent), ui(new Ui::Dialog)
         }
     }
     _servMany[0]->doSendToAllProgramMessage("0",1232);
-    fileOut.setFileName("./permanent.log");
+    fileOut.setFileName("./permanentServer.log");
     fileError.setFileName("./error.log");
-    if(!fileOut.open(QIODevice::WriteOnly))
-        addToLog("Unabled to open permanent.log",Qt::red);
-    if(!fileError.open(QIODevice::WriteOnly))
-        addToLog("Unabled to open error.log",Qt::red);
     timerOfCorrectWork = new QTimer (this);
     connect(timerOfCorrectWork,SIGNAL(timeout()),this,SLOT(writeCurrentState()));
     timerOfCorrectWork->start(1800000);
-    streamOut.setDevice(&fileOut);
-    streamError.setDevice(&fileError);
+    minimumContrast();
 }
 
 Dialog::~Dialog()
 {
-    fileOut.close();
-    fileError.close();
     delete ui;
 }
 
@@ -64,6 +57,14 @@ void Dialog::onAddUserToGui(QString name)
     ui->lwUsers->addItem(name);
     ui->lwLog->insertItem(0, QTime::currentTime().toString()+" "+name);
     ui->lwLog->item(0)->setTextColor(Qt::green);
+    if(!fileOut.open(QIODevice::Append)){
+        addToLog("Unabled to open permanent.log",Qt::red);
+    }else
+    {
+        QTextStream streamOut(&fileOut);
+        streamOut<<QDate::currentDate().toString(Qt::SystemLocaleDate)<<"\t"<<QTime::currentTime().toString()<<"\t"<<"Manager connected"<<"\r\n";
+        fileOut.close();
+    }
 }
 
 void Dialog::onRemoveUserFromGui(QString name)
@@ -73,6 +74,7 @@ void Dialog::onRemoveUserFromGui(QString name)
         {
             ui->lwUsers->takeItem(i);
             ui->lwLog->insertItem(0, QTime::currentTime().toString()+" "+name+" left");
+            //streamOut<<QDate::currentDate().toString(Qt::SystemLocaleDate)<<"\t"<<"Manager disconnected"<<"\r\n";
             ui->lwLog->item(0)->setTextColor(Qt::green);
             break;
         }
@@ -82,6 +84,19 @@ void Dialog::onMessageToGui(QString message, QString from, const QStringList &us
 {
     if (from=="Contrast")
     {
+        if ((message.toDouble())<mincontrast){
+            ui->lwLog->insertItem(0,QDate::currentDate().toString(Qt::SystemLocaleDate)+"\t"+QTime::currentTime().toString()+"\t"+"Low contrast");
+            _servMany[0]->_logged.append(QDate::currentDate().toString(Qt::SystemLocaleDate)+"\t"+QTime::currentTime().toString()+"\t"+"Low contrast");
+            if(!fileError.open(QIODevice::Append)){
+                addToLog("Unabled to open error.log",Qt::red);
+            }
+            else
+            {
+                QTextStream streamError(&fileError);
+                streamError<<QDate::currentDate().toString(Qt::SystemLocaleDate)+"\t"+QTime::currentTime().toString()+"\t"+"Контраст ниже заданного значения\r\n";
+                fileError.close();
+            }
+        }
         if (users.isEmpty())
         {
             ui->lContrast->setText(message);
@@ -99,16 +114,30 @@ void Dialog::onMessageToGui(QString message, QString from, const QStringList &us
     {
         if (users.isEmpty())
         {
-            ui->lwLog->insertItem(0, QDate::currentDate().toString(Qt::SystemLocaleDate)+message+" dT="+ui->lContrast->text());
-            _servMany[0]->_logged.append(QDate::currentDate().toString(Qt::SystemLocaleDate)+" "+message+" dT="+ui->lContrast->text());
-            streamOut<<QDate::currentDate().toString(Qt::SystemLocaleDate)+message+" dT="+ui->lContrast->text()<<endl;
+            if(!fileOut.open(QIODevice::Append)){
+                addToLog("Unabled to open permanent.log",Qt::red);
+            }else
+            {
+                QTextStream streamOut(&fileOut);
+                ui->lwLog->insertItem(0, QDate::currentDate().toString(Qt::SystemLocaleDate)+message+" dT="+ui->lContrast->text());
+                _servMany[0]->_logged.append(QDate::currentDate().toString(Qt::SystemLocaleDate)+" "+message+" dT="+ui->lContrast->text());
+                streamOut<<QDate::currentDate().toString(Qt::SystemLocaleDate)<<"\t"<<message<<"\t"<<"dT=\t"<<ui->lContrast->text()<<"\r\n";
+                fileOut.close();
+            }
         }
         else
         {
-            ui->lwLog->insertItem(0, QDate::currentDate().toString(Qt::SystemLocaleDate)+message+" dT="+ui->lContrast->text());
-            ui->lwLog->item(0)->setTextColor(Qt::blue);
-            _servMany[0]->_logged.append(QDate::currentDate().toString(Qt::SystemLocaleDate)+" "+message+" dT="+ui->lContrast->text());
-            streamOut<<QDate::currentDate().toString(Qt::SystemLocaleDate)+message+" dT="+ui->lContrast->text()<<endl;
+            if(!fileOut.open(QIODevice::Append)){
+                addToLog("Unabled to open permanent.log",Qt::red);
+            }else
+            {
+                QTextStream streamOut(&fileOut);
+                ui->lwLog->insertItem(0, QDate::currentDate().toString(Qt::SystemLocaleDate)+message+" dT="+ui->lContrast->text());
+                ui->lwLog->item(0)->setTextColor(Qt::blue);
+                _servMany[0]->_logged.append(QDate::currentDate().toString(Qt::SystemLocaleDate)+" "+message+" dT="+ui->lContrast->text());
+                streamOut<<QDate::currentDate().toString(Qt::SystemLocaleDate)<<"\t"<<message<<"\t"<<"dT=\t"<<ui->lContrast->text()<<"\r\n";
+                fileOut.close();
+            }
         }
     }
 }
@@ -194,15 +223,39 @@ void Dialog::addToLog(QString text, QColor color, bool toFile)
     {
             ui->lwLog->insertItem(0,text);
             ui->lwLog->item(0)->setTextColor(color);
-            streamOut<<text<<endl;
+            //streamOut<<text<<endl;
 
     }
 }
 
 void Dialog::writeCurrentState(QString text)
 {
-   if(text=="")
-    streamError<<QDate::currentDate().toString(Qt::SystemLocaleDate)<<"\t"<<ui->Status->text()<<endl;
-   else
-    streamError<<QDate::currentDate().toString(Qt::SystemLocaleDate)<<"\t"<<text<<endl;
+    if(!fileError.open(QIODevice::Append)){
+        addToLog("Unabled to open error.log",Qt::red);
+    }
+    else
+    {
+        QTextStream streamError(&fileError);
+     if(text=="")
+       streamError<<QDate::currentDate().toString(Qt::SystemLocaleDate)<<"\t"<<QTime::currentTime().toString()<<"\t"<<ui->Status->text()<<"\r\n";
+     else
+        streamError<<QDate::currentDate().toString(Qt::SystemLocaleDate)<<"\t"<<QTime::currentTime().toString()<<"\t"<<text<<"\r\n";
+     fileError.close();
+    }
+}
+void Dialog::minimumContrast()
+{
+    QFile file("contrast.ini");
+    QString secondstr;
+    if (file.open(QIODevice::ReadOnly))
+    {
+        QTextStream stream(&file);
+        secondstr = stream.readLine();
+        //QStringList notuseany = secondstr.split(" ");
+        mincontrast = secondstr.toDouble();
+        file.close();
+    }
+    else
+        mincontrast = 10;
+    qDebug()<<mincontrast<<endl;
 }
